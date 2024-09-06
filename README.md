@@ -1,6 +1,3 @@
-Here's a **README** file for your Library Management System project:
-
----
 
 # Library Management System
 
