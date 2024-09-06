@@ -103,4 +103,4 @@ g++ library_management.cpp -o library_management
 For any questions or feedback, feel free to contact the developer:
 
 - **Email**: lakshmansharma217@gmail.com
-- **GitHub**: [https://github.com/your-github](https://github.com/your-github)
+- **GitHub**: https://github.com/Lakshmansharma12
