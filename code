@@ -1,0 +1,250 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class Book {
+public:
+    int id;
+    string title;
+    string author;
+    bool isAvailable;
+    string borrower;
+
+    Book(int id, string title, string author) {
+        this->id = id;
+        this->title = title;
+        this->author = author;
+        this->isAvailable = true;
+    }
+
+    void display() {
+        cout << "ID: " << id << " | Title: " << title << " | Author: " << author;
+        cout << " | Availability: " << (isAvailable ? "Available" : ("Borrowed by " + borrower)) << endl;
+    }
+};
+
+class Library {
+private:
+    vector<Book> books;
+
+    bool isDuplicateId(int id) {
+        for (auto &book : books) {
+            if (book.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+public:
+    void addBook(int id, string title, string author) {
+        if (isDuplicateId(id)) {
+            cout << "Book with this ID already exists!" << endl;
+            return;
+        }
+        books.push_back(Book(id, title, author));
+        cout << "Book added successfully!" << endl;
+    }
+
+    void removeBook(int id) {
+        for (auto it = books.begin(); it != books.end(); ++it) {
+            if (it->id == id) {
+                books.erase(it);
+                cout << "Book removed successfully!" << endl;
+                return;
+            }
+        }
+        cout << "Book not found!" << endl;
+    }
+
+    void updateBookInfo(int id, string newTitle, string newAuthor) {
+        for (auto &book : books) {
+            if (book.id == id) {
+                book.title = newTitle;
+                book.author = newAuthor;
+                cout << "Book information updated successfully!" << endl;
+                return;
+            }
+        }
+        cout << "Book not found!" << endl;
+    }
+
+    void listBooks() {
+        for (auto &book : books) {
+            book.display();
+        }
+    }
+
+    void borrowBook(int id, string borrowerName) {
+        for (auto &book : books) {
+            if (book.id == id && book.isAvailable) {
+                book.isAvailable = false;
+                book.borrower = borrowerName;
+                cout << borrowerName << " successfully borrowed the book: " << book.title << endl;
+                return;
+            }
+        }
+        cout << "Book not available!" << endl;
+    }
+
+    void returnBook(int id) {
+        for (auto &book : books) {
+            if (book.id == id && !book.isAvailable) {
+                book.isAvailable = true;
+                book.borrower = "";
+                cout << "Book returned successfully!" << endl;
+                return;
+            }
+        }
+        cout << "Invalid book ID or the book wasn't borrowed!" << endl;
+    }
+
+    void searchBookByTitle(string title) {
+        for (auto &book : books) {
+            if (book.title == title) {
+                book.display();
+                return;
+            }
+        }
+        cout << "Book not found!" << endl;
+    }
+
+    void searchBookByAuthor(string author) {
+        for (auto &book : books) {
+            if (book.author == author) {
+                book.display();
+            }
+        }
+    }
+
+    void listBorrowedBooks() {
+        bool anyBorrowed = false;
+        for (auto &book : books) {
+            if (!book.isAvailable) {
+                book.display();
+                anyBorrowed = true;
+            }
+        }
+        if (!anyBorrowed) {
+            cout << "No books are currently borrowed." << endl;
+        }
+    }
+
+    void recommendBook(string author) {
+        for (auto &book : books) {
+            if (book.author == author && book.isAvailable) {
+                cout << "Recommended book: ";
+                book.display();
+                return;
+            }
+        }
+        cout << "No available books by " << author << " found!" << endl;
+    }
+
+    void sortBooksByTitle() {
+        sort(books.begin(), books.end(), [](Book a, Book b) {
+            return a.title < b.title;
+        });
+        cout << "Books sorted by title." << endl;
+    }
+
+    void sortBooksByAuthor() {
+        sort(books.begin(), books.end(), [](Book a, Book b) {
+            return a.author < b.author;
+        });
+        cout << "Books sorted by author." << endl;
+    }
+};
+
+int main() {
+    Library lib;
+    int choice, id;
+    string title, author, borrowerName;
+
+    while (true) {
+        cout << "\nLibrary Management System\n";
+        cout << "1. Add Book\n2. Remove Book\n3. Update Book Information\n4. List All Books\n5. Borrow Book\n6. Return Book\n7. Search Book by Title\n8. Search Book by Author\n9. List Borrowed Books\n10. Recommend Book\n11. Sort Books by Title\n12. Sort Books by Author\n13. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter Book ID: ";
+            cin >> id;
+            cout << "Enter Book Title: ";
+            cin.ignore();
+            getline(cin, title);
+            cout << "Enter Book Author: ";
+            getline(cin, author);
+            lib.addBook(id, title, author);
+            break;
+        case 2:
+            cout << "Enter Book ID to remove: ";
+            cin >> id;
+            lib.removeBook(id);
+            break;
+        case 3:
+            cout << "Enter Book ID to update: ";
+            cin >> id;
+            cout << "Enter new Book Title: ";
+            cin.ignore();
+            getline(cin, title);
+            cout << "Enter new Book Author: ";
+            getline(cin, author);
+            lib.updateBookInfo(id, title, author);
+            break;
+        case 4:
+            lib.listBooks();
+            break;
+        case 5:
+            cout << "Enter Book ID to borrow: ";
+            cin >> id;
+            cout << "Enter your name: ";
+            cin.ignore();
+            getline(cin, borrowerName);
+            lib.borrowBook(id, borrowerName);
+            break;
+        case 6:
+            cout << "Enter Book ID to return: ";
+            cin >> id;
+            lib.returnBook(id);
+            break;
+        case 7:
+            cout << "Enter Book Title to search: ";
+            cin.ignore();
+            getline(cin, title);
+            lib.searchBookByTitle(title);
+            break;
+        case 8:
+            cout << "Enter Book Author to search: ";
+            cin.ignore();
+            getline(cin, author);
+            lib.searchBookByAuthor(author);
+            break;
+        case 9:
+            lib.listBorrowedBooks();
+            break;
+        case 10:
+            cout << "Enter Author to recommend a book from: ";
+            cin.ignore();
+            getline(cin, author);
+            lib.recommendBook(author);
+            break;
+        case 11:
+            lib.sortBooksByTitle();
+            lib.listBooks();
+            break;
+        case 12:
+            lib.sortBooksByAuthor();
+            lib.listBooks();
+            break;
+        case 13:
+            exit(0);
+        default:
+            cout << "Invalid choice!" << endl;
+        }
+    }
+    return 0;
+}
